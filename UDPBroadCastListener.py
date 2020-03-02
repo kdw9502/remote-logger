@@ -39,5 +39,5 @@ class LogSender:
         return instance
 
     async def listen(self):
-        self.writer.write(LogListener.Log(f"{time.time()}", LogListener.LogType.DEBUG, time.time()).to_json())
+        self.writer.write(LogListener.Log(f"{time.time()}", LogListener.LogType.DEBUG, time.time()).to_json().encode())
         await self.writer.drain()

@@ -5,8 +5,8 @@ from UDPBroadCastListener import UDPBroadCastListener as Listener
 
 
 def main():
-    asyncio.run(app_run())
-    # asyncio.run(tester_run())
+    # asyncio.run(app_run())
+    asyncio.run(tester_run())
 
 
 async def app_run():

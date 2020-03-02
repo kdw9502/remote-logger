@@ -7,8 +7,8 @@ PORT_NUM = 30270
 
 class LogType(Enum):
     DEBUG = 0,
-    Warning = 1,
-    Error = 2
+    WARNING = 1,
+    ERROR = 2
 
 
 class Log:
@@ -22,10 +22,10 @@ class Log:
         full_message = data.decode()
         json_data = json.loads(full_message)
 
-        return cls(json_data['message'], json_data['type'], json_data['timestamp'])
+        return cls(json_data['message'], LogType(json_data['type']), json_data['timestamp'])
 
     def to_json(self):
-        return json.dumps({"message": self.message, "type": int(self.log_type), "timestamp": self.timestamp})
+        return json.dumps({"message": self.message, "type": self.log_type.value, "timestamp": self.timestamp})
 
 
 class LogListener:
@@ -40,7 +40,7 @@ class LogListener:
         return instance
 
     async def listen(self):
-        server = await asyncio.start_server(self._callback, '127.0.0.1', PORT_NUM)
+        server = await asyncio.start_server(self._callback, None, PORT_NUM)
         my_ip = server.sockets[0].getsockname()
         print(f'server started on ip {my_ip}')
 

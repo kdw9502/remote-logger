@@ -66,7 +66,7 @@ class RemoteDebuggerApp:
         self.is_show_error = self.builder.get_variable('is_show_error')
 
     def on_log_added(self):
-        self.log_listbox.insert(self.log_listbox.size() + 1, self.log_listener.logs[-1])
+        self.log_listbox.insert(self.log_listbox.size() + 1, self.log_listener.logs[-1].message)
 
     def on_log_type_changed(self):
         print('a')
@@ -83,7 +83,7 @@ class RemoteDebuggerApp:
             self.full_log_text.config(state=tk.NORMAL)
 
             self.full_log_text.delete('1.0', tk.END)
-            self.full_log_text.insert('1.0', self.log_listener.logs[index])
+            self.full_log_text.insert('1.0', self.log_listener.logs[index].to_json())
 
             # to readonly
             self.full_log_text.config(state=tk.DISABLED)
