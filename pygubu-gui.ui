@@ -162,9 +162,9 @@
     </child>
     <child>
       <object class="ttk.Labelframe" id="Full Log">
-        <property name="height">200</property>
+        <property name="height">0</property>
         <property name="text" translatable="yes">Log</property>
-        <property name="width">300</property>
+        <property name="width">0</property>
         <layout>
           <property name="column">0</property>
           <property name="propagate">True</property>
