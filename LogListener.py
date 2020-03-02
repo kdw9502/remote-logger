@@ -1,11 +1,11 @@
 import asyncio
 import json
-from enum import Enum
+from enum import IntEnum
 
 PORT_NUM = 30270
 
 
-class LogType(Enum):
+class LogType(IntEnum):
     DEBUG = 0,
     WARNING = 1,
     ERROR = 2
@@ -18,14 +18,14 @@ class Log:
         self.timestamp = timestamp
 
     @classmethod
-    def crate_from_raw_bytes_json(cls, data):
+    def create_from_raw_bytes_json(cls, data):
         full_message = data.decode()
         json_data = json.loads(full_message)
 
         return cls(json_data['message'], LogType(json_data['type']), json_data['timestamp'])
 
     def to_json(self):
-        return json.dumps({"message": self.message, "type": self.log_type.value, "timestamp": self.timestamp})
+        return json.dumps({"message": self.message, "type": int(self.log_type), "timestamp": self.timestamp})
 
 
 class LogListener:
@@ -55,7 +55,7 @@ class LogListener:
     async def add_log(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
         print(f"client ip : {writer.get_extra_info('peername')}")
         data = await reader.read(1024)
-        log = Log.crate_from_raw_bytes_json(data)
+        log = Log.create_from_raw_bytes_json(data)
         self.logs.append(log)
 
     def clear(self):
