@@ -21,3 +21,9 @@ class UDPBroadCaster:
         while True:
             self.socket.sendto(message, ("<broadcast>", PORT_NUM))
             await asyncio.sleep(1)
+
+    @staticmethod
+    def get_my_ip():
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("8.8.8.8", 80))
+            return s.getsockname()[0]
