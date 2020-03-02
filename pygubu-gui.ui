@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <interface>
-  <object class="tk.Toplevel" id="TopLevel">
+  <object id="TopLevel" class="tk.Toplevel">
+    <property name="background">#ebebeb</property>
     <property name="cursor">arrow</property>
     <property name="maxsize">1000|1000</property>
     <property name="minsize">400|400</property>
@@ -8,7 +9,7 @@
     <property name="pady">20</property>
     <property name="relief">flat</property>
     <child>
-      <object class="ttk.Frame" id="Frame_2">
+      <object id="Frame_2" class="ttk.Frame">
         <property name="height">0</property>
         <property name="width">0</property>
         <layout>
@@ -17,21 +18,10 @@
           <property name="row">0</property>
           <property name="sticky">e</property>
         </layout>
-        <child>
-          <object class="ttk.Label" id="IpLabel">
-            <property name="text" translatable="yes">IP: 192.168.218.205</property>
-            <property name="textvariable">string:ip_label_text</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="propagate">True</property>
-              <property name="row">0</property>
-            </layout>
-          </object>
-        </child>
       </object>
     </child>
     <child>
-      <object class="ttk.Frame" id="Frame_7">
+      <object id="Frame_7" class="ttk.Frame">
         <property name="height">0</property>
         <property name="width">0</property>
         <layout>
@@ -40,24 +30,10 @@
           <property name="row">1</property>
           <property name="sticky">w</property>
         </layout>
-        <child>
-          <object class="ttk.Button" id="ClearButton">
-            <property name="command">on_click_clear</property>
-            <property name="text" translatable="yes">Clear</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="ipadx">0</property>
-              <property name="padx">2</property>
-              <property name="propagate">False</property>
-              <property name="row">1</property>
-              <property name="sticky">w</property>
-            </layout>
-          </object>
-        </child>
       </object>
     </child>
     <child>
-      <object class="ttk.Frame" id="Frame_1">
+      <object id="Frame_1" class="ttk.Frame">
         <property name="borderwidth">0</property>
         <property name="height">0</property>
         <property name="padding">0</property>
@@ -85,7 +61,7 @@
           </columns>
         </layout>
         <child>
-          <object class="ttk.Checkbutton" id="DebugButton">
+          <object id="DebugButton" class="ttk.Checkbutton">
             <property name="command">on_log_type_changed</property>
             <property name="takefocus">true</property>
             <property name="text" translatable="yes">Debug</property>
@@ -98,7 +74,7 @@
           </object>
         </child>
         <child>
-          <object class="ttk.Checkbutton" id="WarningButton">
+          <object id="WarningButton" class="ttk.Checkbutton">
             <property name="command">on_log_type_changed</property>
             <property name="text" translatable="yes">Warning</property>
             <property name="variable">string:is_show_warning</property>
@@ -110,7 +86,7 @@
           </object>
         </child>
         <child>
-          <object class="ttk.Checkbutton" id="ErrorButton">
+          <object id="ErrorButton" class="ttk.Checkbutton">
             <property name="command">on_log_type_changed</property>
             <property name="text" translatable="yes">Error</property>
             <property name="variable">string:is_display_error</property>
@@ -124,7 +100,7 @@
       </object>
     </child>
     <child>
-      <object class="ttk.Frame" id="Frame_8">
+      <object id="Frame_8" class="ttk.Frame">
         <property name="height">0</property>
         <property name="width">0</property>
         <layout>
@@ -132,58 +108,89 @@
           <property name="propagate">True</property>
           <property name="row">3</property>
         </layout>
+      </object>
+    </child>
+    <child>
+      <object id="Full Log" class="ttk.Labelframe">
+        <property name="height">150</property>
+        <property name="text" translatable="yes">Log</property>
+        <property name="width">350</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">False</property>
+          <property name="row">4</property>
+        </layout>
         <child>
-          <object class="pygubu.builder.widgets.scrollbarhelper" id="scrollbarhelper_1">
-            <property name="scrolltype">vertical</property>
-            <property name="usemousewheel">true</property>
+          <object id="LogText" class="tk.Text">
+            <property name="autoseparators">true</property>
+            <property name="blockcursor">false</property>
+            <property name="cursor">arrow</property>
+            <property name="exportselection">true</property>
+            <property name="height">10</property>
+            <property name="insertunfocussed">none</property>
+            <property name="relief">ridge</property>
+            <property name="width">50</property>
+            <property name="wrap">word</property>
+            <bind sequence="&lt;&lt;ListboxSelect&gt;&gt;" handler="on_listbox_select" add="True" />
             <layout>
               <property name="column">0</property>
               <property name="propagate">True</property>
-              <property name="row">7</property>
+              <property name="row">0</property>
             </layout>
-            <child>
-              <object class="tk.Listbox" id="LogListBox">
-                <property name="activestyle">none</property>
-                <property name="height">10</property>
-                <property name="selectmode">browse</property>
-                <property name="takefocus">false</property>
-                <property name="width">50</property>
-                <bind add="True" handler="on_listbox_select" sequence="&lt;&lt;ListboxSelect&gt;&gt;"/>
-                <layout>
-                  <property name="column">0</property>
-                  <property name="propagate">True</property>
-                  <property name="row">6</property>
-                </layout>
-              </object>
-            </child>
           </object>
         </child>
       </object>
     </child>
     <child>
-      <object class="ttk.Labelframe" id="Full Log">
-        <property name="height">0</property>
-        <property name="text" translatable="yes">Log</property>
-        <property name="width">0</property>
+      <object id="IpLabel" class="ttk.Label">
+        <property name="text" translatable="yes">IP: 192.168.218.205</property>
+        <property name="textvariable">string:ip_label_text</property>
         <layout>
           <property name="column">0</property>
           <property name="propagate">True</property>
-          <property name="row">4</property>
+          <property name="row">0</property>
+          <property name="sticky">e</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object id="ClearButton" class="ttk.Button">
+        <property name="command">on_click_clear</property>
+        <property name="text" translatable="yes">Clear</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="ipadx">0</property>
+          <property name="padx">2</property>
+          <property name="propagate">False</property>
+          <property name="row">1</property>
+          <property name="sticky">w</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object id="scrollbarhelper_1" class="pygubu.builder.widgets.scrollbarhelper">
+        <property name="height">150</property>
+        <property name="scrolltype">horizontal</property>
+        <property name="usemousewheel">true</property>
+        <property name="width">350</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">False</property>
+          <property name="row">2</property>
         </layout>
         <child>
-          <object class="tk.Text" id="LogText">
-            <property name="autoseparators">true</property>
-            <property name="blockcursor">false</property>
-            <property name="cursor">arrow</property>
+          <object id="LogListBox" class="tk.Listbox">
+            <property name="activestyle">none</property>
             <property name="height">10</property>
-            <property name="insertunfocussed">none</property>
+            <property name="relief">ridge</property>
+            <property name="selectmode">browse</property>
+            <property name="takefocus">false</property>
             <property name="width">50</property>
-            <property name="wrap">word</property>
-            <bind add="True" handler="on_listbox_select" sequence="&lt;&lt;ListboxSelect&gt;&gt;"/>
+            <bind sequence="&lt;&lt;ListboxSelect&gt;&gt;" handler="on_listbox_select" add="True" />
             <layout>
               <property name="column">0</property>
               <property name="propagate">True</property>
-              <property name="row">0</property>
+              <property name="row">6</property>
             </layout>
           </object>
         </child>
