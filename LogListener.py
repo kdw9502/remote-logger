@@ -26,9 +26,15 @@ class Log:
 
 
 class LogListener:
-    def __init__(self, callback):
+    def __init__(self):
         self.logs = []
-        self.callback = callback
+        self.callback = None
+
+    @classmethod
+    def create_with_new_log_callback(cls, callback):
+        instance = cls()
+        instance.callback = callback
+        return instance
 
     async def listen(self):
         server = await asyncio.start_server(self._callback, '127.0.0.1', PORT_NUM)
@@ -40,7 +46,8 @@ class LogListener:
 
     async def _callback(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
         await self.add_log(reader, writer)
-        self.callback()
+        if callable(self.callback):
+            self.callback()
 
     async def add_log(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
         print(f"client ip : {writer.get_extra_info('peername')}")

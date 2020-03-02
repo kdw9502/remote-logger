@@ -1,6 +1,7 @@
 import asyncio
 import socket
 
+import LogListener
 import UDPBroadCaster
 
 
@@ -18,8 +19,24 @@ class UDPBroadCastListener:
     async def listen(self):
         while True:
             data, addr = self.socket.recvfrom(1024)
-            print(data)
             if data == UDPBroadCaster.PASSWORD:
                 print(f"server IP is: {addr} ")
+                sender = await LogSender.create_with_ip(addr[0])
+                await sender.listen()
 
             await asyncio.sleep(0.5)
+
+
+class LogSender:
+    @classmethod
+    async def create_with_ip(cls, ip):
+        instance = cls()
+        instance.ip = ip
+
+        instance.reader, instance.writer = await asyncio.open_connection(ip, LogListener.PORT_NUM)
+
+        return instance
+
+    async def listen(self):
+        self.writer.write(input('input: '))
+        await self.writer.drain()
