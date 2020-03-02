@@ -1,5 +1,6 @@
 import asyncio
 import socket
+import time
 
 import LogListener
 import UDPBroadCaster
@@ -38,5 +39,5 @@ class LogSender:
         return instance
 
     async def listen(self):
-        self.writer.write(input('input: '))
+        self.writer.write(LogListener.Log(f"{time.time()}", LogListener.LogType.DEBUG, time.time()).to_json())
         await self.writer.drain()

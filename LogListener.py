@@ -24,6 +24,9 @@ class Log:
 
         return cls(json_data['message'], json_data['type'], json_data['timestamp'])
 
+    def to_json(self):
+        return json.dumps({"message": self.message, "type": int(self.log_type), "timestamp": self.timestamp})
+
 
 class LogListener:
     def __init__(self):
