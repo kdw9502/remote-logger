@@ -3,8 +3,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
-public class RemoteLogClient
+public class RemoteLogClient : MonoBehaviour
 {
     private const int UDP_PORT_NUMBER = 39502;
     private string broadcast_password = "remote-logger";
@@ -56,6 +57,12 @@ public class RemoteLogClient
         var timeSpan = (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0));
 
         return (long) timeSpan.TotalSeconds;
+    }
+
+    private async void Start()
+    {
+        await GetServerIP();
+        SendLog("test");
     }
 }
 
