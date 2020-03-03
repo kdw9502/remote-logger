@@ -4,7 +4,7 @@ import tkinter.ttk
 
 import pygubu
 
-from LogListener import LogListener
+from LogListener import LogListener, LogType
 from UDPBroadCaster import UDPBroadCaster
 
 TARGET_FPS = 30
@@ -25,11 +25,15 @@ class RemoteDebuggerApp:
 
         self.log_listener = LogListener.create_with_new_log_callback(self.on_log_added)
 
-        self._set_callbacks()
+        self.is_show_debug: tk.BooleanVar = self.builder.get_variable('is_show_debug')
+        self.is_show_warning: tk.BooleanVar = self.builder.get_variable('is_show_warning')
+        self.is_show_error: tk.BooleanVar = self.builder.get_variable('is_show_error')
 
-        self.is_show_debug = None
-        self.is_show_warning = None
-        self.is_show_error = None
+        self.is_show_debug.set(True)
+        self.is_show_warning.set(True)
+        self.is_show_error.set(True)
+
+        self._set_callbacks()
 
     async def run(self):
         asyncio.create_task(self.log_listener.listen())
@@ -60,30 +64,55 @@ class RemoteDebuggerApp:
             except tk.TclError:
                 break
 
-    def _set_tk_vars(self):
-        self.is_show_debug = self.builder.get_variable('is_show_debug')
-        self.is_show_warning = self.builder.get_variable('is_show_warning')
-        self.is_show_error = self.builder.get_variable('is_show_error')
-
     def on_log_added(self):
-        self.log_listbox.insert(self.log_listbox.size() + 1, self.log_listener.logs[-1].message)
+        log = self.log_listener.logs[-1]
+
+        if self._is_enabled_log(log):
+            self.log_listbox.insert(self.log_listbox.size() + 1, log.message)
 
     def on_log_type_changed(self):
-        print('a')
+        logs = self._get_filtered_logs()
+        self._set_listbox_with_logs(logs)
+
+    def _get_filtered_logs(self):
+        logs = []
+        for log in self.log_listener.logs:
+            if self._is_enabled_log(log):
+                logs.append(log)
+
+        return logs
+
+    def _is_enabled_log(self, log):
+        return log.log_type == LogType.DEBUG and self.is_show_debug.get() or \
+               log.log_type == LogType.WARNING and self.is_show_warning.get() or \
+               log.log_type == LogType.ERROR and self.is_show_error.get()
 
     def on_click_clear(self):
         self.log_listener.clear()
-        self.log_listbox.delete(0, self.log_listbox.size())
+        self._clear_listbox()
 
     def on_listbox_select(self, event: tk.Event):
         widget = event.widget
         if len(widget.curselection()) > 0:
             index = widget.curselection()[0]
+            message = self.log_listbox.get(index)
+            log = self.log_listener.find_log_by_message(message)
 
             self.full_log_text.config(state=tk.NORMAL)
-
-            self.full_log_text.delete('1.0', tk.END)
-            self.full_log_text.insert('1.0', self.log_listener.logs[index].to_json())
+            self._change_log_text(str(log))
 
             # to readonly
             self.full_log_text.config(state=tk.DISABLED)
+
+    def _change_log_text(self, text):
+
+        self.full_log_text.delete('1.0', tk.END)
+        self.full_log_text.insert('1.0', text)
+
+    def _clear_listbox(self):
+        self.log_listbox.delete(0, self.log_listbox.size())
+
+    def _set_listbox_with_logs(self, logs):
+        self._clear_listbox()
+        for index, log in enumerate(logs):
+            self.log_listbox.insert(index, log.message)

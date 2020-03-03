@@ -23,7 +23,7 @@ class UDPBroadCastListener:
             if data == UDPBroadCaster.PASSWORD:
                 print(f"server IP is: {addr} ")
                 sender = await LogSender.create_with_ip(addr[0])
-                await sender.listen()
+                await sender.send_log()
 
             await asyncio.sleep(0.5)
 
@@ -38,6 +38,7 @@ class LogSender:
 
         return instance
 
-    async def listen(self):
-        self.writer.write(LogListener.Log(f"{time.time()}", LogListener.LogType.DEBUG, time.time()).to_json().encode())
+    async def send_log(self):
+        self.writer.write(
+            LogListener.Log(f"{time.time()} example", LogListener.LogType.DEBUG, time.time()).to_json().encode())
         await self.writer.drain()
