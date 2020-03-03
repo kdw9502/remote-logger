@@ -25,3 +25,12 @@ Once you find the server, connect the TCP socket to the server IP. Then send a J
 {"message": "log message something", "type": 0, "timestamp": 1583207428}
 ```
 type: 0 = Debug, 1 = Warning, 2 = Error.
+
+#Example
+
+See ClientExample.py for the Python client implementation.
+
+See UnityClientExample.cs for the Unity client implementation.
+
+
+
