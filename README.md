@@ -26,7 +26,7 @@ Once you find the server, connect the TCP socket to the server IP. Then send a J
 ```
 type: 0 = Debug, 1 = Warning, 2 = Error.
 
-#Example
+### Example
 
 See ClientExample.py for the Python client implementation.
 
