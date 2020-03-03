@@ -39,15 +39,17 @@ class RemoteDebuggerApp:
         asyncio.create_task(self.log_listener.listen())
         await self._run_async_mainloop()
 
+    async def _run_async_mainloop(self):
+        while True:
+            await asyncio.sleep(1 / TARGET_FPS)
+            try:
+                self.top_level.update()
+            except tk.TclError:
+                break
+
     def _load_from_file(self):
         self.builder.add_from_file('pygubu-gui.ui')
         self.top_level = self.builder.get_object('TopLevel')
-
-    def _set_callbacks(self):
-        command_dict = {function_name: getattr(self, function_name) for function_name in dir(self)
-                        if callable(getattr(self, function_name)) and not function_name.startswith("_")}
-
-        self.builder.connect_callbacks(command_dict)
 
     def _init_broad_caster(self):
         asyncio.create_task(self.broad_caster.start_broadcast())
@@ -56,13 +58,11 @@ class RemoteDebuggerApp:
         var: tkinter.StringVar = self.builder.get_variable('ip_label_text')
         var.set(f"Local IP : {my_ip}")
 
-    async def _run_async_mainloop(self):
-        while True:
-            await asyncio.sleep(1 / TARGET_FPS)
-            try:
-                self.top_level.update()
-            except tk.TclError:
-                break
+    def _set_callbacks(self):
+        command_dict = {function_name: getattr(self, function_name) for function_name in dir(self)
+                        if callable(getattr(self, function_name)) and not function_name.startswith("_")}
+
+        self.builder.connect_callbacks(command_dict)
 
     def on_log_added(self):
         log = self.log_listener.logs[-1]

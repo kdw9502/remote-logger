@@ -19,7 +19,7 @@ class Log:
         self.timestamp = timestamp
 
     @classmethod
-    def create_from_json(cls, data):
+    def create_from_json(cls, data: str):
         json_data = json.loads(data)
 
         return cls(json_data['message'], LogType(json_data['type']), json_data['timestamp'])
@@ -35,36 +35,41 @@ class Log:
 class LogListener:
     def __init__(self):
         self.logs = []
-        self.callback = None
+        self.new_log_callback = None
 
     @classmethod
     def create_with_new_log_callback(cls, callback):
         instance = cls()
-        instance.callback = callback
+        instance.new_log_callback = callback
         return instance
 
     async def listen(self):
-        server = await asyncio.start_server(self._callback, None, PORT_NUM)
+        server = await asyncio.start_server(self._on_server_get_message, None, PORT_NUM)
         my_ip = server.sockets[0].getsockname()
         print(f'server started on ip {my_ip}')
 
         async with server:
             await server.serve_forever()
 
-    async def _callback(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+    async def _on_server_get_message(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
         await self.add_log(reader, writer)
-        if callable(self.callback):
-            self.callback()
+        if callable(self.new_log_callback):
+            self.new_log_callback()
 
     async def add_log(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        print(f"client ip : {writer.get_extra_info('peername')}")
         data = await reader.read(1024)
+        print(f"client ip : {writer.get_extra_info('peername')} message:{data}")
         log = Log.create_from_json(data.decode())
         self.logs.append(log)
 
-    def find_log_by_message(self, message):
+    def find_log_by_message(self, message: str):
         for log in self.logs:
             if log.message == message:
+                return log
+
+    def find_log_by_timestamp(self, timestamp: float):
+        for log in self.logs:
+            if log.timestamp == timestamp:
                 return log
 
     def clear(self):

@@ -1,6 +1,7 @@
 import asyncio
 import socket
 import time
+from asyncio import StreamWriter, StreamReader
 
 import LogListener
 import UDPBroadCaster
@@ -29,8 +30,12 @@ class UDPBroadCastListener:
 
 
 class LogSender:
+    def __init__(self):
+        self.reader: StreamReader = None
+        self.writer: StreamWriter = None
+
     @classmethod
-    async def create_with_ip(cls, ip):
+    async def create_with_ip(cls, ip: str):
         instance = cls()
         instance.ip = ip
 
