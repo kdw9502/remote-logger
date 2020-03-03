@@ -4,7 +4,7 @@ python after 3.7
 ## Installation
 intall gui dependency [pygubu](https://github.com/alejandroautalan/pygubu) by command
 ```
-pip3 install -r requirements
+pip3 install -r requirements.txt
 ```
 
 # Usage
