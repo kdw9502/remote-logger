@@ -1,16 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <interface>
-  <object class="tk.Toplevel" id="TopLevel">
-    <property name="background">#ebebeb</property>
-    <property name="cursor">arrow</property>
-    <property name="height">0</property>
-    <property name="maxsize">1000|1000</property>
-    <property name="minsize">400|400</property>
-    <property name="padx">20</property>
-    <property name="pady">20</property>
-    <property name="relief">flat</property>
-    <property name="resizable">none</property>
-    <property name="width">0</property>
+  <object class="ttk.Frame" id="MainFrame">
+    <property name="height">200</property>
+    <property name="padding">20</property>
+    <property name="width">200</property>
+    <layout>
+      <property name="column">0</property>
+      <property name="propagate">True</property>
+      <property name="row">0</property>
+    </layout>
     <child>
       <object class="ttk.Label" id="IpLabel">
         <property name="text" translatable="yes">IP: 192.168.218.205</property>
@@ -30,7 +28,7 @@
         <layout>
           <property name="column">0</property>
           <property name="ipadx">0</property>
-          <property name="padx">2</property>
+          <property name="padx">0</property>
           <property name="propagate">False</property>
           <property name="row">1</property>
           <property name="sticky">w</property>
@@ -38,7 +36,7 @@
       </object>
     </child>
     <child>
-      <object class="ttk.Frame" id="Frame_1">
+      <object class="ttk.Frame" id="LogTypeFrame">
         <property name="borderwidth">0</property>
         <property name="height">0</property>
         <property name="padding">0</property>
@@ -154,7 +152,7 @@
     </child>
     <child>
       <object class="ttk.Labelframe" id="Full Log">
-        <property name="height">150</property>
+        <property name="height">155</property>
         <property name="text" translatable="yes">Log</property>
         <property name="width">500</property>
         <layout>
@@ -173,11 +171,12 @@
             <property name="relief">ridge</property>
             <property name="state">normal</property>
             <property name="takefocus">false</property>
-            <property name="width">71</property>
+            <property name="width">70</property>
             <property name="wrap">word</property>
             <bind add="True" handler="on_listbox_select" sequence="&lt;&lt;ListboxSelect&gt;&gt;"/>
             <layout>
               <property name="column">0</property>
+              <property name="padx">3</property>
               <property name="propagate">True</property>
               <property name="row">0</property>
             </layout>

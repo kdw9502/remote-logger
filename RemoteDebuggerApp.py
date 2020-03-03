@@ -4,6 +4,7 @@ import tkinter.ttk
 from datetime import datetime
 
 import pygubu
+from ttkthemes import ThemedTk
 
 from LogListener import LogListener, LogType
 from UDPBroadCaster import UDPBroadCaster
@@ -14,9 +15,12 @@ TARGET_FPS = 30
 class RemoteDebuggerApp:
     def __init__(self):
         self.builder = pygubu.Builder()
+        self.window = ThemedTk(theme="radiance")
+        self.window.title("Remote Debugger")
+        self.builder.root = self.window
 
-        self.top_level = None
-        self._load_from_file()
+        self.builder.add_from_file('pygubu-gui.ui')
+        self.top_level: tk.Toplevel = self.builder.get_object('MainFrame')
 
         self.log_treeview: tkinter.ttk.Treeview = self.builder.get_object('LogTreeview')
         self.full_log_text: tk.Text = self.builder.get_object('LogText')
@@ -44,13 +48,9 @@ class RemoteDebuggerApp:
         while True:
             await asyncio.sleep(1 / TARGET_FPS)
             try:
-                self.top_level.update()
+                self.window.update()
             except tk.TclError:
                 break
-
-    def _load_from_file(self):
-        self.builder.add_from_file('pygubu-gui.ui')
-        self.top_level = self.builder.get_object('TopLevel')
 
     def _init_broad_caster(self):
         asyncio.create_task(self.broad_caster.start_broadcast())
