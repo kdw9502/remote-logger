@@ -1,6 +1,7 @@
 import asyncio
 import tkinter as tk
 import tkinter.ttk
+from datetime import datetime
 
 import pygubu
 
@@ -17,7 +18,7 @@ class RemoteDebuggerApp:
         self.top_level = None
         self._load_from_file()
 
-        self.log_listbox: tk.Listbox = self.builder.get_object('LogListBox')
+        self.log_treeview: tkinter.ttk.Treeview = self.builder.get_object('LogTreeview')
         self.full_log_text: tk.Text = self.builder.get_object('LogText')
 
         self.broad_caster = UDPBroadCaster()
@@ -68,11 +69,11 @@ class RemoteDebuggerApp:
         log = self.log_listener.logs[-1]
 
         if self._is_enabled_log(log):
-            self.log_listbox.insert(self.log_listbox.size() + 1, log.message)
+            self._add_log_to_treeview(tk.END, log)
 
     def on_log_type_changed(self):
         logs = self._get_filtered_logs()
-        self._set_listbox_with_logs(logs)
+        self._set_treeview_with_logs(logs)
 
     def _get_filtered_logs(self):
         logs = []
@@ -89,30 +90,35 @@ class RemoteDebuggerApp:
 
     def on_click_clear(self):
         self.log_listener.clear()
-        self._clear_listbox()
+        self._clear_treeview()
 
-    def on_listbox_select(self, event: tk.Event):
-        widget = event.widget
-        if len(widget.curselection()) > 0:
-            index = widget.curselection()[0]
-            message = self.log_listbox.get(index)
-            log = self.log_listener.find_log_by_message(message)
+    def on_treeview_select(self, event: tk.Event):
+        widget: tkinter.ttk.Treeview = event.widget
 
-            self.full_log_text.config(state=tk.NORMAL)
-            self._change_log_text(str(log))
+        message = widget.selection()[0]
+        log = self.log_listener.find_log_by_message(message)
 
-            # to readonly
-            self.full_log_text.config(state=tk.DISABLED)
+        self.full_log_text.config(state=tk.NORMAL)
+        self._change_log_text(str(log))
+
+        # to readonly
+        self.full_log_text.config(state=tk.DISABLED)
 
     def _change_log_text(self, text):
 
         self.full_log_text.delete('1.0', tk.END)
         self.full_log_text.insert('1.0', text)
 
-    def _clear_listbox(self):
-        self.log_listbox.delete(0, self.log_listbox.size())
+    def _clear_treeview(self):
+        children = self.log_treeview.get_children()
+        self.log_treeview.delete(*children)
 
-    def _set_listbox_with_logs(self, logs):
-        self._clear_listbox()
+    def _set_treeview_with_logs(self, logs):
+        self._clear_treeview()
         for index, log in enumerate(logs):
-            self.log_listbox.insert(index, log.message)
+            self._add_log_to_treeview(index, log)
+
+    def _add_log_to_treeview(self, index, log):
+        time = datetime.fromtimestamp(log.timestamp)
+        self.log_treeview.insert("", index, log.message, text=f"{time.hour}:{time.minute}:{time.second}",
+                                 values=(log.message, log.log_type.name))
