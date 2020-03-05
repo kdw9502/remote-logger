@@ -95,11 +95,11 @@ class RemoteDebuggerApp:
     def on_treeview_select(self, event: tk.Event):
         widget: tkinter.ttk.Treeview = event.widget
 
-        message = widget.selection()[0]
-        log = self.log_listener.find_log_by_message(message)
+        iid = widget.selection()[0]
+        log = self.log_listener.find_log_by_id(iid)
 
         self.full_log_text.config(state=tk.NORMAL)
-        self._change_log_text(str(log))
+        self._change_log_text(str(log.message))
 
         # to readonly
         self.full_log_text.config(state=tk.DISABLED)
@@ -120,5 +120,6 @@ class RemoteDebuggerApp:
 
     def _add_log_to_treeview(self, index, log):
         time = datetime.fromtimestamp(log.timestamp)
-        self.log_treeview.insert("", index, log.message, text=f"{time.hour}:{time.minute}:{time.second}",
+
+        self.log_treeview.insert("", index, log.id, text=f"{time.hour}:{time.minute}:{time.second}",
                                  values=(log.message, log.log_type.name))

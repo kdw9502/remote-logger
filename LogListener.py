@@ -12,11 +12,18 @@ class LogType(IntEnum):
     ERROR = 2
 
 
+log_id_count = 0
+
+
 class Log:
     def __init__(self, message: str, log_type: LogType = LogType.DEBUG, timestamp=0):
         self.message = message
         self.log_type = log_type
         self.timestamp = timestamp
+
+        global log_id_count
+        log_id_count += 1
+        self.id = str(log_id_count)
 
     @classmethod
     def create_from_json(cls, data: str):
@@ -57,10 +64,15 @@ class LogListener:
             self.new_log_callback()
 
     async def add_log(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        data = await reader.read(1024)
+        data = await reader.read(4096)
         print(f"client ip : {writer.get_extra_info('peername')} message:{data}")
         log = Log.create_from_json(data.decode())
         self.logs.append(log)
+
+    def find_log_by_id(self, id):
+        for log in self.logs:
+            if log.id == id:
+                return log
 
     def find_log_by_message(self, message: str):
         for log in self.logs:
