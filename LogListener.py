@@ -1,5 +1,6 @@
 import asyncio
 import json
+import time
 from datetime import datetime
 from enum import IntEnum
 
@@ -14,6 +15,8 @@ class LogType(IntEnum):
 
 log_id_count = 0
 
+MAX_LOG_BYTE_SIZE = 1 << 13
+
 
 class Log:
     def __init__(self, message: str, log_type: LogType = LogType.DEBUG, timestamp=0):
@@ -27,7 +30,10 @@ class Log:
 
     @classmethod
     def create_from_json(cls, data: str):
-        json_data = json.loads(data)
+        try:
+            json_data = json.loads(data)
+        except ValueError:
+            return cls('can\'t decode log propery.', LogType.ERROR, int(time.time()))
 
         return cls(json_data['message'], LogType(json_data['type']), json_data['timestamp'])
 
@@ -64,7 +70,7 @@ class LogListener:
             self.new_log_callback()
 
     async def add_log(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        data = await reader.read(4096)
+        data = await reader.read(MAX_LOG_BYTE_SIZE)
         print(f"client ip : {writer.get_extra_info('peername')} message:{data}")
         log = Log.create_from_json(data.decode())
         self.logs.append(log)
