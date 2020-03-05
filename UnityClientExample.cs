@@ -9,10 +9,11 @@ using UnityEngine;
 public static class RemoteLogClient
 {
     private static List<Log> queue = new List<Log>();
+    private static Task GetServerIPTask;
 
     static RemoteLogClient()
     {
-        GetServerIP();
+        GetServerIPTask = GetServerIP();
     }
 
     [Serializable]
@@ -53,30 +54,33 @@ public static class RemoteLogClient
         if (message == broadcast_password)
         {
             serverIp = result.RemoteEndPoint.Address.ToString();
-        }
-        else
-        {
-            GetServerIP();
-        }
-    }
-
-
-    public static async void SendMessageToServer(string message)
-    {
-        var log = new Log {message = message, type = LogType.Debug, timestamp = UnixTimeNow()};
-
-        if (string.IsNullOrEmpty(serverIp))
-        {
-            queue.Add(log);
-        }
-        else
-        {
+            GetServerIPTask = null;
             if (queue.Count > 0)
             {
                 queue.ForEach(SendLog);
                 queue.Clear();
             }
+        }
+        else
+        {
+            GetServerIPTask = GetServerIP();
+        }
+    }
 
+
+    public static void SendMessageToServer(string message)
+    {
+        var log = new Log {message = message, type = LogType.Debug, timestamp = UnixTimeNow()};
+
+        if (string.IsNullOrEmpty(serverIp))
+        {
+            if (GetServerIPTask == null)
+                GetServerIPTask = GetServerIP();
+
+            queue.Add(log);
+        }
+        else
+        {
             SendLog(log);
         }
     }
